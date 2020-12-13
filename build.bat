@@ -1,4 +1,4 @@
 g++ ^
 main.cpp ^
-ann.cpp && ^
+maths.cpp&&^
 a.exe
