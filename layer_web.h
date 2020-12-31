@@ -23,8 +23,8 @@ struct Layer_web {
 
 // these define X()
 
-  DEFINE_0ARG_FUNCTION(void, forwards(), l)
-  DEFINE_0ARG_FUNCTION(void, backwards(), l)
+  DEFINE_0ARG_FUNCTION(void, forwards, l)
+  DEFINE_0ARG_FUNCTION(void, backwards, l)
 
   Layer_web(std::string layer_type_t, std::string value_type_t,
             int inputs, int outputs,
@@ -33,11 +33,11 @@ struct Layer_web {
     layer_type = layer_type_t;
     value_type = value_type_t;
 
-    in_f_resize(inputs);
-    out_f_resize(outputs);
+    in_f_RESIZE(inputs);
+    out_f_RESIZE(outputs);
 
-    in_b_resize(outputs);
-    out_b_resize(inputs);
+    in_b_RESIZE(outputs);
+    out_b_RESIZE(inputs);
 
     float (*af_f)(float, int);
     double (*af_d)(double, int);
