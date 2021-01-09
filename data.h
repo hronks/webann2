@@ -31,6 +31,8 @@ struct Data {
   std::vector<T> out_x;
   std::vector<T> out_y;
 
+  int total_train;
+  int total_valid;
   std::vector<int> train_order;
   std::vector<int> valid_order;
   int current_train;
@@ -75,6 +77,27 @@ struct Data {
 
   }
 
+  void set_order() {
+
+    current_train = 0;
+    std::vector<int> p;
+    p = permutation_random(rows);
+
+    train_order.resize(0);
+    valid_order.resize(0);
+
+    for(int i = 0; i < train_prop * rows; ++i) {
+      train_order.push_back(p[i]);
+    }
+
+    for(int i = train_prop * rows + 1; i < rows; ++i) {
+      valid_order.push_back(p[i]);
+    }
+
+    total_train = train_order.size();
+    total_valid = valid_order.size();
+  }
+
   Data<T>(int x, int y, std::string input_data, bool has_header,
           float train_prop_t) {
 
@@ -89,6 +112,7 @@ struct Data {
     train_prop = train_prop_t;
 
     load_data(input_data, has_header);
+    set_order();
   }
 
   Data<T>(int x, int y) {
@@ -179,28 +203,26 @@ struct Data {
     }
   }
 
-  void set_order() {
+  void permute_train_data() {
 
-    std::vector<int> p;
-    p = permutation_random(rows);
 
-    train_order.resize(0);
-    valid_order.resize(rows - (train_prop * rows));
 
-    for(int i = 0; i < train_prop * rows; ++i) {
-      train_order.push_back(p[i]);
-    }
-
-    for(int i = train_prop * rows + 1; i < rows; ++i) {
-      valid_order.push_back(p[i]);
-    }
 
   }
+
   void get_next_train() {
 
-    out_x = raw[0];
+    for(int j = 0; j < x_columns; ++j)
+      out_x[j] = raw[train_order[current_train]][j];
 
+    for(int j = 0; j < y_columns; ++j)
+      out_y[j] = raw[train_order[current_train]][x_columns + j];
+
+    ++current_train;
+    if(current_train == train_order.size())
+      current_train = 0;
   }
+
   void get_next_valid() {
 
   }

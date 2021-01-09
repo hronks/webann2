@@ -1,20 +1,35 @@
 #pragma once
 
+#define DEFINE_ELEMENT(TYPE, NAME, STRUCT) \
+  TYPE NAME; \
+  \
+  void NAME##_PUSH() { \
+    if(value_type == "float") STRUCT##_f->NAME = NAME; \
+    if(value_type == "double") STRUCT##_d->NAME = NAME; \
+    if(value_type == "long double") STRUCT##_ld->NAME = NAME; \
+  } \
+  \
+  void NAME##_PULL() { \
+    if(value_type == "float") NAME = STRUCT##_f->NAME; \
+    if(value_type == "double") NAME = STRUCT##_d->NAME; \
+    if(value_type == "long double") NAME = STRUCT##_ld->NAME; \
+  } \
+
 #define DEFINE_1D_VECTOR(NAME, STRUCT) \
   std::vector<float> NAME##_f; \
   std::vector<double> NAME##_d; \
   std::vector<long double> NAME##_ld; \
  \
-    void NAME##_COPY_FROM(std::vector<float> x) { \
-      for(int i = 0; i < NAME##_f.size(); ++i) NAME##_f[i] = x[i];} \
-    void NAME##_COPY_FROM(std::vector<double> x) { \
-      for(int i = 0; i < NAME##_d.size(); ++i) NAME##_d[i] = x[i];} \
-    void NAME##_COPY_FROM(std::vector<long double> x){ \
-      for(int i = 0; i < NAME##_ld.size(); ++i) NAME##_ld[i] = x[i];} \
+  void NAME##_COPY_FROM(std::vector<float> x) { \
+    for(int i = 0; i < NAME##_f.size(); ++i) NAME##_f[i] = x[i];} \
+  void NAME##_COPY_FROM(std::vector<double> x) { \
+    for(int i = 0; i < NAME##_d.size(); ++i) NAME##_d[i] = x[i];} \
+  void NAME##_COPY_FROM(std::vector<long double> x){ \
+    for(int i = 0; i < NAME##_ld.size(); ++i) NAME##_ld[i] = x[i];} \
  \
-    void NAME##_COPY_TO(std::vector<float> &x) {x = NAME##_f;} \
-    void NAME##_COPY_TO(std::vector<double> &x) {x = NAME##_d;} \
-    void NAME##_COPY_TO(std::vector<long double> &x) {x = NAME##_ld;} \
+  void NAME##_COPY_TO(std::vector<float> &x) {x = NAME##_f;} \
+  void NAME##_COPY_TO(std::vector<double> &x) {x = NAME##_d;} \
+  void NAME##_COPY_TO(std::vector<long double> &x) {x = NAME##_ld;} \
  \
   void NAME##_PUSH_SOFT() { \
     if(value_type == "float") \

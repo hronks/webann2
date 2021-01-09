@@ -22,7 +22,7 @@ void print(       const std::vector <T> & operand) {
     std::cout<<operand[i];
     if(i < operand.size() - 1) std::cout<<", ";
   }
-  std::cout<<">\n";
+  std::cout<<">";
 }
 
 template <typename T>
@@ -130,7 +130,7 @@ void print(       const std::vector <std::vector <T>> & operand) {
       std::cout<<operand[i][j];
       if(j < operand[i].size() - 1) std::cout<<", ";
     }
-    std::cout<<"}\n";
+    std::cout<<"}";
   }
 }
 
@@ -248,6 +248,16 @@ void apply( std::vector <T (*)(T, int)> funct, int d,
 
 }
 
+template <typename T>
+void apply( const std::vector <T> & operand,
+                  std::vector <T (*)(T, int)> funct, int d,
+                  std::vector <T> & variable) {
+
+  for(int i = 0; i < variable.size(); ++i)
+    variable[i] = funct[i](operand[i], d);
+
+}
+
 /// Mathematical functions
 
 template <typename T>
@@ -291,9 +301,7 @@ void Binary_crossentropy( const std::vector <T> & operand,
       else diff[i] = -1;
     }
 
-
     else {
-
       error -= actual[i] * log(operand[i]) +
         (1 - actual[i]) * log(1 - operand[i]);
       diff[i] = (operand[i] - actual[i]) / (operand[i] * (1 - operand[i]));

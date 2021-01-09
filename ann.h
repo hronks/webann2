@@ -6,3 +6,4 @@
 
 #include "layer.h"
 #include "data.h"
+#include "cost.h"

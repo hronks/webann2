@@ -20,6 +20,8 @@ struct Data_web {
 
   DEFINE_1D_VECTOR(out_x, d)
   DEFINE_1D_VECTOR(out_y, d)
+  DEFINE_ELEMENT(int, total_train, d)
+  DEFINE_ELEMENT(int, total_valid, d)
 
   DEFINE_1D_VECTOR(norm_x_a, d)
   DEFINE_1D_VECTOR(norm_x_b, d)
@@ -30,6 +32,7 @@ struct Data_web {
   DEFINE_2ARG_FUNCTION(void, find_norms, d, int, int)
   DEFINE_0ARG_FUNCTION(void, norm_raw_data, d)
   DEFINE_0ARG_FUNCTION(void, set_order, d)
+  DEFINE_0ARG_FUNCTION(void, permute_train_data, d)
   DEFINE_0ARG_FUNCTION(void, get_next_train, d)
   DEFINE_0ARG_FUNCTION(void, get_next_valid, d)
 
@@ -56,6 +59,12 @@ struct Data_web {
       d_ld = new Data<long double>(x_columns, y_columns, data_string,
                                    has_header, train_prop_t);
 
+  }
+
+  ~Data_web() {
+    if(value_type == "float") delete d_f;
+    if(value_type == "double") delete d_d;
+    if(value_type == "long double") delete d_ld;
   }
 
 };
