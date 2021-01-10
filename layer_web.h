@@ -25,7 +25,9 @@ struct Layer_web {
 
   DEFINE_0ARG_FUNCTION(void, forwards, l)
   DEFINE_0ARG_FUNCTION(void, backwards, l)
+  DEFINE_0ARG_FUNCTION(void, learn, l)
 
+  Layer_web();
   Layer_web(std::string layer_type_t, std::string value_type_t,
             int inputs, int outputs,
             std::string activation_function) {

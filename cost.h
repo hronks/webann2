@@ -2,7 +2,7 @@
 
 #include "maths.h"
 
-#define DEBUG_COST_H 1
+#define DEBUG_COST_H 0
 
 template <class T>
 struct Cost {

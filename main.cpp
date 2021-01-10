@@ -2,6 +2,9 @@
 
 int main() {
 
+  Network_web network({Layer("dense", "double", 10, 32, "relu")});
+
+
   Data_web data("double", 10, 1, start_data, 1, 0.8);
   std::vector<Layer_web> layer;
   layer.reserve(3);
@@ -23,9 +26,11 @@ int main() {
   data.norm_raw_data();
   data.total_train_PULL();
 
-  for(int j = 0; j < 1; ++j) {
+  double error;
 
-    std::cout<<"\nTRIAL "<<j+1<<"\n";
+  for(int j = 0; j < 30; ++j) {
+
+    error = 0;
 
     data.get_next_train();
 
@@ -37,38 +42,54 @@ int main() {
     for(int i = 0; i < layer.size(); ++i) {
       layer[i].in_f_COPY_FROM(x);
       layer[i].in_f_PUSH_SOFT();
-      std::cout<<"\nLAYER FORWARD "<<i+1<<" (TRIAL "<<j+1<<")\n";
       layer[i].forwards();
       layer[i].out_f_PULL_SOFT();
       layer[i].out_f_COPY_TO(x);
     }
-
-  //  std::cout<<"x vector is: ";
-  //  print(x);
-  //  std::cout<<"\n";
-
-  //  std::cout<<"y vector is: ";
-  //  print(y);
-  //  std::cout<<"\n";
 
     cost.data_y_COPY_FROM(y);
     cost.data_y_PUSH_SOFT();
     cost.in_f_COPY_FROM(x);
     cost.in_f_PUSH_SOFT();
 
-    std::cout<<"\nCOST (TRIAL "<<j+1<<")\n";
     cost.calculate();
+    std::cout<<cost.c_d->cost<<" -> ";
 
     cost.diff_PULL_SOFT();
+    cost.diff_COPY_TO(x);
 
     for(int i = layer.size() - 1; i >= 0; --i) {
       layer[i].in_b_COPY_FROM(x);
       layer[i].in_b_PUSH_SOFT();
-      std::cout<<"\nLAYER BACKWARD "<<i+1<<" (TRIAL "<<j+1<<")\n";
       layer[i].backwards();
       layer[i].out_b_PULL_SOFT();
       layer[i].out_b_COPY_TO(x);
+      layer[i].learn();
+
     }
+
+
+
+    data.out_x_PULL_SOFT();
+    data.out_x_COPY_TO(x);
+    data.out_y_PULL_SOFT();
+    data.out_y_COPY_TO(y);
+
+    for(int i = 0; i < layer.size(); ++i) {
+      layer[i].in_f_COPY_FROM(x);
+      layer[i].in_f_PUSH_SOFT();
+      layer[i].forwards();
+      layer[i].out_f_PULL_SOFT();
+      layer[i].out_f_COPY_TO(x);
+    }
+
+    cost.data_y_COPY_FROM(y);
+    cost.data_y_PUSH_SOFT();
+    cost.in_f_COPY_FROM(x);
+    cost.in_f_PUSH_SOFT();
+
+    cost.calculate();
+    std::cout<<cost.c_d->cost<<"\n";
 
   }
 

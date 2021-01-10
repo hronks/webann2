@@ -17,6 +17,7 @@ struct Cost_web {
 
   DEFINE_0ARG_FUNCTION(void, calculate, c)
 
+  Cost_web() {};
   Cost_web(std::string function, std::string value_type_t, int variables) {
 
     value_type = value_type_t;

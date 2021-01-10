@@ -131,6 +131,7 @@ void print(       const std::vector <std::vector <T>> & operand) {
       if(j < operand[i].size() - 1) std::cout<<", ";
     }
     std::cout<<"}";
+    if(i != operand.size() - 1) std::cout<<"\n";
   }
 }
 
@@ -174,6 +175,18 @@ void multiply(    const std::vector <std::vector <T>> & operand1,
     for(int j = 0; j < variable[i].size(); ++ j)
       for(int k = 0; k < operand2.size(); ++k) {
         variable[i][j] += operand1[i][k] * operand2[k][j];
+      }
+  }
+
+template <typename T>
+void multiply_transpose(  const std::vector <std::vector <T>> & operand1,
+                          const std::vector <std::vector <T>> & operand2,
+                                std::vector <std::vector <T>> & variable) {
+
+  for(int i = 0; i < variable.size(); ++i)
+    for(int j = 0; j < variable[i].size(); ++ j)
+      for(int k = 0; k < operand2.size(); ++k) {
+        variable[i][j] += operand1[k][i] * operand2[k][j];
       }
   }
 
@@ -225,7 +238,20 @@ void multiply(    const std::vector <std::vector <T>> & operand1,
   for(int i = 0; i < variable.size(); ++i)
     for(int k = 0; k < operand2.size(); ++k)
       variable[i] += operand1[i][k] * operand2[k];
-  }
+}
+
+template <typename T>
+void multiply_transpose(  const std::vector <std::vector <T>> & operand1,
+                          const std::vector <T> & operand2,
+                                std::vector <T> & variable) {
+
+  for(int i = 0; i < variable.size(); ++i)
+    variable[i] = 0;
+
+  for(int i = 0; i < variable.size(); ++i)
+    for(int k = 0; k < operand2.size(); ++k)
+      variable[i] += operand1[k][i] * operand2[k];
+}
 
 template <typename T>
 void outer(       const std::vector <T> & operand1,

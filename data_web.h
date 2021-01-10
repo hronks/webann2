@@ -36,6 +36,7 @@ struct Data_web {
   DEFINE_0ARG_FUNCTION(void, get_next_train, d)
   DEFINE_0ARG_FUNCTION(void, get_next_valid, d)
 
+  Data_web() {};
   Data_web( std::string value_type_t, int x_columns, int y_columns,
             std::string & data_string, bool has_header,
             float train_prop_t) {

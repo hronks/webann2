@@ -1,7 +1,7 @@
 #pragma once
 #include "maths.h"
 
-#define DEBUG_LAYER_H 1
+#define DEBUG_LAYER_H 0
 
 template <class T>
 struct Layer {
@@ -16,6 +16,7 @@ struct Layer {
 
   virtual void forwards() { };
   virtual void backwards() { };
+  virtual void learn() { };
 };
 
 template <class T>
@@ -27,6 +28,7 @@ struct DenseLayer: Layer<T> {
 
   std::vector<T> df;
   std::vector<T> delta;
+  std::vector<std::vector<T>> epsilon;
 
   DenseLayer<T>(int inputs, int outputs, T (*f)(T, int)) {
     this->in_f.resize(inputs);
@@ -37,7 +39,9 @@ struct DenseLayer: Layer<T> {
     this->delta.resize(outputs);
 
     w.resize(outputs);
+    epsilon.resize(outputs);
     for(int i = 0; i < outputs; ++i) {
+      epsilon[i].resize(inputs);
       af.push_back(f);
       b.push_back(random<T>(-1, 1));
       for(int j = 0; j < inputs; ++j)
@@ -47,6 +51,7 @@ struct DenseLayer: Layer<T> {
 
   void forwards();
   void backwards();
+  void learn();
 };
 
 template <class T>
@@ -103,8 +108,6 @@ void DenseLayer<T>::forwards() {
 template <class T>
 void DenseLayer<T>::backwards() {
 
-  std::vector<std::vector<T>> temp;
-
   if(DEBUG_LAYER_H == 1) {
     std::cout<<"\nbackwards input:\n";
     print(this->in_b);
@@ -118,15 +121,47 @@ void DenseLayer<T>::backwards() {
   }
 
   hadamard(df, this->in_b, delta);
-  transpose(w, temp);
-  multiply(temp, delta, this->out_b);
+  multiply_transpose(w, delta, this->out_b);
+  outer(this->in_f, delta, epsilon);
 
   if(DEBUG_LAYER_H == 1) {
-    std::cout<<"\ndelta:\n";
+    std::cout<<"\ndelta (dC/db):\n";
     print(delta);
     std::cout<<"\n";
   }
 
+  if(DEBUG_LAYER_H == 1) {
+    std::cout<<"\nepsilon (dC/dw):\n";
+    print(epsilon);
+    std::cout<<"\n";
+  }
 
+  if(DEBUG_LAYER_H == 1) {
+    std::cout<<"\nbackwards out:\n";
+    print(this->out_b);
+    std::cout<<"\n";
+  }
+
+}
+
+template <class T>
+void DenseLayer<T>::learn() {
+
+  T h = 0.001;
+
+  perturb(delta, -h, b);
+  perturb(epsilon, -h, w);
+
+  if(DEBUG_LAYER_H == 1) {
+    std::cout<<"\nupdated bias vector:\n";
+    print(b);
+    std::cout<<"\n";
+  }
+
+  if(DEBUG_LAYER_H == 1) {
+    std::cout<<"\nupdated weight vector:\n";
+    print(w);
+    std::cout<<"\n";
+  }
 
 }
